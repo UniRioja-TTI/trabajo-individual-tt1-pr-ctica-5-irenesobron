@@ -26,12 +26,12 @@ import modelo.Punto;
 public class GridController {
 	private final InterfazContactoSim ics;
 	private final Logger logger;
-	
+
 	public GridController(InterfazContactoSim ics, Logger logger) {
 		this.ics = ics;
 		this.logger = logger;
 	}
-	
+
 	@GetMapping("/grid")
     public String solicitud(@RequestParam int tok, Model model) {
 		DatosSimulation ds = ics.descargarDatos(tok);
