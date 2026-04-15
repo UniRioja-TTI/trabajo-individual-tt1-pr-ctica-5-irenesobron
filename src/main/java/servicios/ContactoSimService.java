@@ -44,7 +44,6 @@ public class ContactoSimService implements InterfazContactoSim {
         }
         ApiClient apiClient = new ApiClient();
         apiClient.setBasePath(":8080");
-        System.out.println(apiClient.getBaseUri());
         this.solicitudApi = new SolicitudApi(apiClient);
         this.resultadosApi = new ResultadosApi(apiClient);
     }
