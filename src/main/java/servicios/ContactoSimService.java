@@ -44,13 +44,16 @@ public class ContactoSimService implements InterfazContactoSim {
         }
         ApiClient apiClient = new ApiClient();
         apiClient.setBasePath(":8080");
+        System.out.println(apiClient.getBaseUri());
         this.solicitudApi = new SolicitudApi(apiClient);
         this.resultadosApi = new ResultadosApi(apiClient);
     }
 
     @Override
     public int solicitarSimulation(DatosSolicitud sol) {
+        this.solicitudes.add(sol);
         try {
+            //Preparar la solicitud para la VM
             Solicitud solicitud = new Solicitud();
             List<Integer> cantidades = new ArrayList<>(sol.getNums().values());
             List<String> nombres = new ArrayList<>();
@@ -60,8 +63,10 @@ public class ContactoSimService implements InterfazContactoSim {
             solicitud.setCantidadesIniciales(cantidades);
             solicitud.setNombreEntidades(nombres);
 
+            //Enviar la solicitud a la MV
             solicitudApi.solicitudSolicitarPost(USUARIO, solicitud);
 
+            //Obtener el token que nos asignó la VM
             List<Integer> tokens = solicitudApi.solicitudGetSolicitudesUsuarioGet(USUARIO);
             if (tokens != null && !tokens.isEmpty()) {
                 return tokens.get(tokens.size() - 1);
@@ -78,9 +83,12 @@ public class ContactoSimService implements InterfazContactoSim {
             // Llamar al servicio real
             ResultsResponse respuesta = resultadosApi.resultadosPost(USUARIO, ticket);
             if (respuesta != null) {
-                String data = respuesta.getData();
-                if (data != null && !data.isEmpty()) {
-                    return parsearRespuesta(data);
+                String contenidoReal = respuesta.getData();
+
+                if(contenidoReal != null) {
+                    System.out.println(contenidoReal);
+                    System.out.println(parsearRespuesta(contenidoReal));
+                    return parsearRespuesta(contenidoReal);
                 }
             }
         } catch (ApiException e) {
